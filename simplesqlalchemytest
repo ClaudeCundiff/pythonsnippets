@@ -1,0 +1,32 @@
+import sys
+import os
+import string
+import numpy as np
+import sqlalchemy as db
+
+def main():
+    print('starting...')
+    
+    USERNAME = ''
+    PASSWORD = ''
+    HOST     = '127.0.0.1'
+    DATABASE = 'wine_data'
+
+    # mysql+pymysql://root:password@127.0.0.1/logdb
+    connection_string = 'mysql+pymysql://{}:{}@{}/{}'.format(USERNAME, PASSWORD, HOST, DATABASE)
+
+    engine = db.create_engine(connection_string)
+    connection = engine.connect()
+    metadata = db.MetaData()
+    RedWineReviews = db.Table('RedWineReviews', metadata, autoload=True, autoload_with=engine)
+    query = db.select([RedWineReviews])
+    ResultProxy = connection.execute(query)
+    ResultSet = ResultProxy.fetchall()
+    print(ResultSet[:3])
+
+    print(repr(metadata.tables['RedWineReviews']))
+
+    print('done.')
+
+if __name__ == '__main__':
+    main()
